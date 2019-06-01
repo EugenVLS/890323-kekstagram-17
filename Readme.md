@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Евгений Власов](https://up.htmlacademy.ru/javascript/17/user/890323).
-* Наставник: `Неизвестно`.
+* Наставник: [Егор Король] (https://htmlacademy.ru/profile/id501115).
 
 ---
 
