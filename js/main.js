@@ -21,11 +21,20 @@ var getRandom = function (min, max) {
   return rand;
 };
 
+var getComments = function () {
+  var photoComments = [];
+  var numberOfComments = getRandom(0, comments.length);
+  for (var i = 0; i < numberOfComments; i++) {
+    photoComments[i] = comments[getRandom(0, comments.length - 1)];
+  }
+  return photoComments;
+};
+
 var getPhoto = function (index) {
   var photo = {};
   photo.url = 'photos/' + index + '.jpg';
   photo.likes = getRandom(15, 200);
-  photo.comments = comments[getRandom(0, comments.length - 1)];
+  photo.comments = getComments();
 
   return photo;
 };
@@ -43,7 +52,7 @@ var renderPhotos = function (photo) {
   var photoElement = photosTemplate.cloneNode(true);
   photoElement.querySelector('.picture__img').setAttribute('src', photo.url);
   photoElement.querySelector('.picture__likes').textContent = photo.likes;
-  photoElement.querySelector('.picture__comments').textContent = photo.comments;
+  photoElement.querySelector('.picture__comments').textContent = photo.comments.length;
 
   return photoElement;
 };
