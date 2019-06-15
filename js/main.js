@@ -7,8 +7,6 @@ var comments = ['Всё отлично!', 'В целом всё неплохо. 
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
 
-var amount = 25;
-
 var photoListElement = document.querySelector('.pictures');
 
 var photosTemplate = document.querySelector('#picture')
@@ -39,7 +37,7 @@ var getPhoto = function (index) {
   return photo;
 };
 
-var getPhotos = function () {
+var getPhotos = function (amount) {
   var photos = [];
   for (var i = 0; i < amount; i++) {
     photos[i] = getPhoto(i + 1);
@@ -67,6 +65,6 @@ var showPhotos = function (photos) {
   photoListElement.appendChild(fragment);
 };
 
-var photos = getPhotos();
+var photos = getPhotos(25);
 
 showPhotos(photos);
