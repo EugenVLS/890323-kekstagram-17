@@ -65,3 +65,79 @@ var getTemplate = function (photos) {
 };
 
 document.querySelector('.pictures').appendChild(getTemplate(getData(25)));
+
+var ESC_KEYCODE = 27;
+
+var inputUpload = document.querySelector('#upload-file');
+var editPhotoForm = document.querySelector('.img-upload__overlay');
+var uploadCancel = editPhotoForm.querySelector('#upload-cancel');
+var uploadPreview = editPhotoForm.querySelector('.img-upload__preview img');
+var radioEffects = editPhotoForm.querySelectorAll('.effects__radio');
+var pin = editPhotoForm.querySelector('.effect-level__pin');
+var effectLevelLine = editPhotoForm.querySelector('.effect-level__depth');
+var effectLevelValue = editPhotoForm.querySelector('.effect-level__value');
+var sliderEffect = editPhotoForm.querySelector('.effect-level');
+
+var onPopupEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closePopup();
+  }
+};
+
+var openPopup = function () {
+  editPhotoForm.classList.remove('hidden');
+  document.addEventListener('keydown', onPopupEscPress);
+  sliderEffect.style.visibility = 'hidden';
+};
+
+var closePopup = function () {
+  editPhotoForm.classList.add('hidden');
+  inputUpload.value = '';
+  document.removeEventListener('keydown', onPopupEscPress);
+};
+
+var putEffect = function (evt) {
+  uploadPreview.classList = '';
+  uploadPreview.classList.add('effects__preview--' + evt.target.value);
+};
+
+var resetFilter = function (evt) {
+  pin.style.left = '100%';
+  effectLevelLine.style.width = '100%';
+  effectLevelValue.value = 100;
+  sliderEffect.style.visibility = '';
+  if (evt.target.value === 'none') {
+    sliderEffect.style.visibility = 'hidden';
+  }
+};
+
+var getPinValue = function (evt) {
+  var width = evt.target.offsetParent.offsetWidth;
+  var coordX = evt.target.offsetLeft;
+  var value = Math.round(coordX / width * 100);
+  return value;
+};
+
+var putEffectSaturation = function (value) {
+  return value;
+};
+
+for (var i = 0; i < radioEffects.length; i++) {
+  radioEffects[i].addEventListener('change', function (evt) {
+    resetFilter(evt);
+    putEffect(evt);
+  });
+}
+
+pin.addEventListener('mouseup', function (evt) {
+  var pinValue = getPinValue(evt);
+  putEffectSaturation(pinValue);
+});
+
+inputUpload.addEventListener('change', function () {
+  openPopup();
+});
+
+uploadCancel.addEventListener('click', function () {
+  closePopup();
+});
