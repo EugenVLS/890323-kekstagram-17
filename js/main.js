@@ -1,11 +1,13 @@
 'use strict';
 
-var comments = ['Всё отлично!', 'В целом всё неплохо. Но не всё.',
+var phrases = ['Всё отлично!', 'В целом всё неплохо. Но не всё.',
   'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
   'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
+
+var names = ['Василий', 'Петр', 'Артем', 'Ольга', 'Николай', 'Дарья'];
 
 var photosTemplate = document.querySelector('#picture')
   .content
@@ -13,37 +15,52 @@ var photosTemplate = document.querySelector('#picture')
 
 var getRandomValue = function (min, max) {
   var rand = min + Math.random() * (max + 1 - min);
-  rand = Math.floor(rand);
-  return rand;
+  return Math.floor(rand);
+};
+
+var getCommentText = function () {
+  var commentText = '';
+  var numberOfPhrases = getRandomValue(1, 2);
+
+  if (numberOfPhrases === 1) {
+    commentText = phrases[getRandomValue(0, phrases.length - 1)];
+  } else {
+    commentText = phrases[getRandomValue(0, phrases.length - 1)] + phrases[getRandomValue(0, phrases.length - 1)];
+  }
+
+  return commentText;
+};
+
+var getComment = function () {
+  return {
+    avatar: 'img/avatar-' + getRandomValue(1, 6) + '.svg',
+    message: getCommentText(),
+    name: names[getRandomValue(0, 5)]
+  };
 };
 
 var getComments = function () {
-  var photoComments = [];
-  var numberOfComments = getRandomValue(0, comments.length);
+  var comments = [{}];
+  var numberOfComments = getRandomValue(0, phrases.length);
+
   for (var i = 0; i < numberOfComments; i++) {
-    var numberOfPhrases = getRandomValue(1, 2);
-
-    if (numberOfPhrases === 1) {
-      photoComments[i] = comments[getRandomValue(0, comments.length - 1)];
-    } else {
-      photoComments[i] = comments[getRandomValue(0, comments.length - 1)] + comments[getRandomValue(0, comments.length - 1)];
-    }
-
+    comments[i] = getComment();
   }
-  return photoComments;
+
+  return comments;
 };
 
 var renderPhoto = function (index) {
-  var photo = {};
-  photo.url = 'photos/' + index + '.jpg';
-  photo.likes = getRandomValue(15, 200);
-  photo.comments = getComments();
-
-  return photo;
+  return {
+    url: 'photos/' + index + '.jpg',
+    likes: getRandomValue(15, 200),
+    comments: getComments()
+  };
 };
 
 var getData = function (amount) {
   var photos = [];
+
   for (var i = 0; i < amount; i++) {
     photos[i] = renderPhoto(i + 1);
   }
@@ -61,6 +78,7 @@ var getTemplate = function (photos) {
     photoElement.querySelector('.picture__comments').textContent = photos[i].comments.length;
     fragment.appendChild(photoElement);
   }
+
   return fragment;
 };
 
@@ -114,12 +132,7 @@ var resetFilter = function (evt) {
 var getPinValue = function (evt) {
   var width = evt.target.offsetParent.offsetWidth;
   var coordX = evt.target.offsetLeft;
-  var value = Math.round(coordX / width * 100);
-  return value;
-};
-
-var putEffectSaturation = function (value) {
-  return value;
+  return Math.round(coordX / width * 100);
 };
 
 for (var i = 0; i < radioEffects.length; i++) {
@@ -131,7 +144,6 @@ for (var i = 0; i < radioEffects.length; i++) {
 
 pin.addEventListener('mouseup', function (evt) {
   var pinValue = getPinValue(evt);
-  putEffectSaturation(pinValue);
 });
 
 inputUpload.addEventListener('change', function () {
