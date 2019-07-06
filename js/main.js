@@ -1,70 +1,168 @@
 'use strict';
 
-var comments = ['Всё отлично!', 'В целом всё неплохо. Но не всё.',
+var phrases = [
+  'Всё отлично!',
+  'В целом всё неплохо. Но не всё.',
   'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
   'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
-
-var photoListElement = document.querySelector('.pictures');
+var names = ['Василий', 'Петр', 'Артем', 'Ольга', 'Николай', 'Дарья'];
 
 var photosTemplate = document.querySelector('#picture')
   .content
   .querySelector('.picture');
 
-var getRandom = function (min, max) {
+var getRandomValue = function (min, max) {
   var rand = min + Math.random() * (max + 1 - min);
-  rand = Math.floor(rand);
-  return rand;
+
+  return Math.floor(rand);
+};
+
+var getRandomNumbersArray = function (number) {
+  var result = [];
+
+  for (var i = 1; i <= number; i++) {
+    result.push(i);
+  }
+
+  var compareRandom = function () {
+    return Math.random() - 0.5;
+  };
+
+  return result.sort(compareRandom);
+};
+
+var getPhrases = function (numberOfPhrases) {
+  var result = '';
+  var localPhrases = phrases.concat([]);
+
+  for (var index = 0; index < numberOfPhrases; index++) {
+    var indexOfPhrase = getRandomValue(0, localPhrases.length - 1);
+    var phrase = localPhrases[indexOfPhrase];
+
+    result = result + phrase;
+    localPhrases.splice(indexOfPhrase, 1);
+  }
+
+  return result;
 };
 
 var getComments = function () {
-  var photoComments = [];
-  var numberOfComments = getRandom(0, comments.length);
-  for (var i = 0; i < numberOfComments; i++) {
-    photoComments[i] = comments[getRandom(0, comments.length - 1)];
-  }
-  return photoComments;
-};
+  var arr = [];
+  var numberOfComments = getRandomValue(1, 6);
+  var avatars = getRandomNumbersArray(6);
 
-var getPhoto = function (index) {
-  var photo = {};
-  photo.url = 'photos/' + index + '.jpg';
-  photo.likes = getRandom(15, 200);
-  photo.comments = getComments();
-
-  return photo;
-};
-
-var getPhotos = function (amount) {
-  var photos = [];
-  for (var i = 0; i < amount; i++) {
-    photos[i] = getPhoto(i + 1);
+  for (var index = 0; index < numberOfComments; index++) {
+    arr.push({
+      avatar: 'img/avatar-' + avatars[index] + '.svg',
+      message: getPhrases(getRandomValue(1, 2)),
+      name: names[getRandomValue(0, names.length - 1)]
+    });
   }
 
-  return photos;
+  return arr;
 };
 
-var renderPhotos = function (photo) {
-  var photoElement = photosTemplate.cloneNode(true);
-  photoElement.querySelector('.picture__img').setAttribute('src', photo.url);
-  photoElement.querySelector('.picture__likes').textContent = photo.likes;
-  photoElement.querySelector('.picture__comments').textContent = photo.comments.length;
+var getData = function (number) {
+  var arr = [];
+  var photoNumbers = getRandomNumbersArray(number);
 
-  return photoElement;
+  for (var i = 0; i < number; i++) {
+    arr.push({
+      url: 'photos/' + photoNumbers[i] + '.jpg',
+      likes: getRandomValue(15, 200),
+      comments: getComments()
+    });
+  }
+
+  return arr;
 };
 
-var showPhotos = function (photos) {
+var getTemplate = function (photos) {
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < photos.length; i++) {
-    fragment.appendChild(renderPhotos(photos[i]));
+    var photoElement = photosTemplate.cloneNode(true);
+    photoElement.querySelector('.picture__img').setAttribute('src', photos[i].url);
+    photoElement.querySelector('.picture__likes').textContent = photos[i].likes;
+    photoElement.querySelector('.picture__comments').textContent = photos[i].comments.length;
+    fragment.appendChild(photoElement);
   }
 
-  photoListElement.appendChild(fragment);
+  return fragment;
 };
 
-var photos = getPhotos(25);
+document.querySelector('.pictures').appendChild(getTemplate(getData(25)));
 
-showPhotos(photos);
+var ESC_KEYCODE = 27;
+
+var inputUpload = document.querySelector('#upload-file');
+var editPhotoForm = document.querySelector('.img-upload__overlay');
+var uploadCancel = editPhotoForm.querySelector('#upload-cancel');
+var uploadPreview = editPhotoForm.querySelector('.img-upload__preview img');
+var radioEffects = editPhotoForm.querySelectorAll('.effects__radio');
+var pin = editPhotoForm.querySelector('.effect-level__pin');
+var effectLevelLine = editPhotoForm.querySelector('.effect-level__depth');
+var effectLevelValue = editPhotoForm.querySelector('.effect-level__value');
+var sliderEffect = editPhotoForm.querySelector('.effect-level');
+
+var onPopupEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closePopup();
+  }
+};
+
+var openPopup = function () {
+  editPhotoForm.classList.remove('hidden');
+  document.addEventListener('keydown', onPopupEscPress);
+  sliderEffect.style.visibility = 'hidden';
+};
+
+var closePopup = function () {
+  editPhotoForm.classList.add('hidden');
+  inputUpload.value = '';
+  document.removeEventListener('keydown', onPopupEscPress);
+};
+
+var putEffect = function (evt) {
+  uploadPreview.classList = '';
+  uploadPreview.classList.add('effects__preview--' + evt.target.value);
+};
+
+var resetFilter = function (evt) {
+  pin.style.left = '100%';
+  effectLevelLine.style.width = '100%';
+  effectLevelValue.value = 100;
+  sliderEffect.style.visibility = '';
+  if (evt.target.value === 'none') {
+    sliderEffect.style.visibility = 'hidden';
+  }
+};
+
+var getPinValue = function (evt) {
+  var width = evt.target.offsetParent.offsetWidth;
+  var coordX = evt.target.offsetLeft;
+  return Math.round(coordX / width * 100);
+};
+
+for (var i = 0; i < radioEffects.length; i++) {
+  radioEffects[i].addEventListener('change', function (evt) {
+    resetFilter(evt);
+    putEffect(evt);
+  });
+}
+
+pin.addEventListener('mouseup', function (evt) {
+  var pinValue = getPinValue(evt);
+  return pinValue;
+});
+
+inputUpload.addEventListener('change', function () {
+  openPopup();
+});
+
+uploadCancel.addEventListener('click', function () {
+  closePopup();
+});
