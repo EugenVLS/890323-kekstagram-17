@@ -1,12 +1,13 @@
 'use strict';
 
-var phrases = ['Всё отлично!', 'В целом всё неплохо. Но не всё.',
+var phrases = [
+  'Всё отлично!',
+  'В целом всё неплохо. Но не всё.',
   'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
   'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
-
 var names = ['Василий', 'Петр', 'Артем', 'Ольга', 'Николай', 'Дарья'];
 
 var photosTemplate = document.querySelector('#picture')
@@ -15,76 +16,68 @@ var photosTemplate = document.querySelector('#picture')
 
 var getRandomValue = function (min, max) {
   var rand = min + Math.random() * (max + 1 - min);
+
   return Math.floor(rand);
 };
 
-var getRandomArray = function (min, max, length) {
-  var array = [];
+var getRandomNumbersArray = function (number) {
+  var result = [];
 
-  while (array.length < length) {
-    var randomValue = getRandomValue(min, max);
-    if (array.indexOf(randomValue) === -1) {
-      array.push(randomValue);
-    }
+  for (var i = 1; i <= number; i++) {
+    result.push(i);
   }
 
-  return array;
-};
-
-var getCommentText = function () {
-  var commentText = '';
-  var numberOfPhrases = getRandomValue(1, 2);
-
-  switch (numberOfPhrases) {
-    case 1:
-      commentText = phrases[getRandomValue(0, phrases.length - 1)];
-      break;
-    case 2:
-      var phraseIndexArray = getRandomArray(0, phrases.length - 1, numberOfPhrases);
-      for (var i = 0; i < phraseIndexArray.length; i++) {
-        commentText += phrases[phraseIndexArray[i]];
-      }
-      break;
-  }
-
-  return commentText;
-};
-
-var getComment = function () {
-  return {
-    avatar: 'img/avatar-' + getRandomValue(1, 6) + '.svg',
-    message: getCommentText(),
-    name: names[getRandomValue(0, 5)]
+  var compareRandom = function () {
+    return Math.random() - 0.5;
   };
+
+  return result.sort(compareRandom);
+};
+
+var getPhrases = function (numberOfPhrases) {
+  var result = '';
+  var localPhrases = phrases.concat([]);
+
+  for (var index = 0; index < numberOfPhrases; index++) {
+    var indexOfPhrase = getRandomValue(0, localPhrases.length - 1);
+    var phrase = localPhrases[indexOfPhrase];
+
+    result = result + phrase;
+    localPhrases.splice(indexOfPhrase, 1);
+  }
+
+  return result;
 };
 
 var getComments = function () {
-  var comments = [];
-  var numberOfComments = getRandomValue(1, phrases.length);
+  var arr = [];
+  var numberOfComments = getRandomValue(1, 6);
+  var avatars = getRandomNumbersArray(6);
 
-  for (var i = 0; i < numberOfComments; i++) {
-    comments[i] = getComment();
+  for (var index = 0; index < numberOfComments; index++) {
+    arr.push({
+      avatar: 'img/avatar-' + avatars[index] + '.svg',
+      message: getPhrases(getRandomValue(1, 2)),
+      name: names[getRandomValue(0, names.length - 1)]
+    });
   }
 
-  return comments;
+  return arr;
 };
 
-var renderPhoto = function (index) {
-  return {
-    url: 'photos/' + index + '.jpg',
-    likes: getRandomValue(15, 200),
-    comments: getComments()
-  };
-};
+var getData = function (number) {
+  var arr = [];
+  var photoNumbers = getRandomNumbersArray(number);
 
-var getData = function (amount) {
-  var photos = [];
-
-  for (var i = 0; i < amount; i++) {
-    photos[i] = renderPhoto(i + 1);
+  for (var i = 0; i < number; i++) {
+    arr.push({
+      url: 'photos/' + photoNumbers[i] + '.jpg',
+      likes: getRandomValue(15, 200),
+      comments: getComments()
+    });
   }
 
-  return photos;
+  return arr;
 };
 
 var getTemplate = function (photos) {
