@@ -173,13 +173,3 @@ inputUpload.addEventListener('change', function () {
 uploadCancel.addEventListener('click', function () {
   closePopup();
 });
-
-var commentInput = document.querySelector('.text__description');
-
-commentInput.addEventListener('focus', function () {
-  document.removeEventListener('keydown', onPopupEscPress);
-});
-
-commentInput.addEventListener('blur', function () {
-  document.addEventListener('keydown', onPopupEscPress);
-});
