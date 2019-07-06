@@ -18,14 +18,33 @@ var getRandomValue = function (min, max) {
   return Math.floor(rand);
 };
 
+var getRandomArray = function (min, max, length) {
+  var array = [];
+
+  while (array.length < length) {
+    var randomValue = getRandomValue(min, max);
+    if (array.indexOf(randomValue) === -1) {
+      array.push(randomValue);
+    }
+  }
+
+  return array;
+};
+
 var getCommentText = function () {
   var commentText = '';
   var numberOfPhrases = getRandomValue(1, 2);
 
-  if (numberOfPhrases === 1) {
-    commentText = phrases[getRandomValue(0, phrases.length - 1)];
-  } else {
-    commentText = phrases[getRandomValue(0, phrases.length - 1)] + phrases[getRandomValue(0, phrases.length - 1)];
+  switch (numberOfPhrases) {
+    case 1:
+      commentText = phrases[getRandomValue(0, phrases.length - 1)];
+      break;
+    case 2:
+      var phraseIndexArray = getRandomArray(0, phrases.length - 1, numberOfPhrases);
+      for (var i = 0; i < phraseIndexArray.length; i++) {
+        commentText += phrases[phraseIndexArray[i]];
+      }
+      break;
   }
 
   return commentText;
@@ -40,8 +59,8 @@ var getComment = function () {
 };
 
 var getComments = function () {
-  var comments = [{}];
-  var numberOfComments = getRandomValue(0, phrases.length);
+  var comments = [];
+  var numberOfComments = getRandomValue(1, phrases.length);
 
   for (var i = 0; i < numberOfComments; i++) {
     comments[i] = getComment();
@@ -144,6 +163,7 @@ for (var i = 0; i < radioEffects.length; i++) {
 
 pin.addEventListener('mouseup', function (evt) {
   var pinValue = getPinValue(evt);
+  return pinValue;
 });
 
 inputUpload.addEventListener('change', function () {
@@ -152,4 +172,14 @@ inputUpload.addEventListener('change', function () {
 
 uploadCancel.addEventListener('click', function () {
   closePopup();
+});
+
+var commentInput = document.querySelector('.text__description');
+
+commentInput.addEventListener('focus', function () {
+  document.removeEventListener('keydown', onPopupEscPress);
+});
+
+commentInput.addEventListener('blur', function () {
+  document.addEventListener('keydown', onPopupEscPress);
 });
