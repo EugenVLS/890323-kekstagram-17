@@ -10,26 +10,32 @@ var phrases = [
 ];
 var names = ['Василий', 'Петр', 'Артем', 'Ольга', 'Николай', 'Дарья'];
 
-var effects = [{effect: 'chrome',
+var effects = [{
+  effect: 'chrome',
   property: 'grayscale',
   min: 0,
-  max: 1},
-{effect: 'sepia',
+  max: 1
+}, {
+  effect: 'sepia',
   property: 'sepia',
   min: 0,
-  max: 1},
-{effect: 'marvin',
+  max: 1
+}, {
+  effect: 'marvin',
   property: 'invert',
   min: 0,
-  max: 100},
-{effect: 'phobos',
+  max: 100
+}, {
+  effect: 'phobos',
   property: 'blur',
   min: 0,
-  max: 3},
-{effect: 'heat',
+  max: 3
+}, {
+  effect: 'heat',
   property: 'brightness',
   min: 1,
-  max: 3}];
+  max: 3
+}];
 
 var photosTemplate = document.querySelector('#picture')
   .content
@@ -172,10 +178,27 @@ var getPinValue = function (evt) {
   return Math.round(coordX / width * 100);
 };
 
-var getEffectValue = function (min, max, pinValue) {
+var getEffectValue = function (property, min, max, pinValue) {
+  var effectValue = min + (max - min) / 100 * pinValue;
   var value = '';
 
-  value = min + (max - min) / 100 * pinValue;
+  switch (property) {
+    case 'grayscale':
+      value = property + '(' + effectValue + ')';
+      break;
+    case 'sepia':
+      value = property + '(' + effectValue + ')';
+      break;
+    case 'invert':
+      value = property + '(' + effectValue + '%)';
+      break;
+    case 'blur':
+      value = property + '(' + effectValue + 'px)';
+      break;
+    case 'brightness':
+      value = property + '(' + effectValue + ')';
+      break;
+  }
 
   return value;
 };
@@ -185,25 +208,9 @@ var setEffectSaturation = function (effect) {
 
   for (var i = 0; i < effects.length; i++) {
     if (effects[i].effect === effect) {
-      var effectValue = getEffectValue(effects[i].min, effects[i].max, pinValue);
+      var effectValue = getEffectValue(effects[i].property, effects[i].min, effects[i].max, pinValue);
 
-      switch (effects[i].property) {
-        case 'grayscale':
-          uploadPreview.style.filter = effects[i].property + '(' + effectValue + ')';
-          break;
-        case 'sepia':
-          uploadPreview.style.filter = effects[i].property + '(' + effectValue + ')';
-          break;
-        case 'invert':
-          uploadPreview.style.filter = effects[i].property + '(' + effectValue + '%)';
-          break;
-        case 'blur':
-          uploadPreview.style.filter = effects[i].property + '(' + effectValue + 'px)';
-          break;
-        case 'brightness':
-          uploadPreview.style.filter = effects[i].property + '(' + effectValue + ')';
-          break;
-      }
+      uploadPreview.style.filter = effectValue;
     }
   }
 };
@@ -223,10 +230,11 @@ effectLevelPin.addEventListener('mousedown', function (evt) {
     y: evt.clientY
   };
 
-
   var onMouseMove = function (moveEvt) {
     var width = effectLevelPin.offsetParent.offsetWidth;
+
     moveEvt.preventDefault();
+
     var shift = {
       x: startCoords.x - moveEvt.clientX
     };
@@ -235,8 +243,11 @@ effectLevelPin.addEventListener('mousedown', function (evt) {
       x: moveEvt.clientX
     };
 
-    if (effectLevelPin.offsetLeft - shift.x >= 0 && effectLevelPin.offsetLeft - shift.x <= width) {
+    var insideEffectLine = effectLevelPin.offsetLeft - shift.x >= 0 && effectLevelPin.offsetLeft - shift.x <= width;
+
+    if (insideEffectLine) {
       var effectPinValue = getPinValue(evt);
+
       effectLevelValue.value = effectPinValue;
       effectLevelPin.style.left = (effectLevelPin.offsetLeft - shift.x) + 'px';
       effectLevelLine.style.width = effectPinValue + '%';
@@ -249,7 +260,6 @@ effectLevelPin.addEventListener('mousedown', function (evt) {
 
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
-
   };
 
   document.addEventListener('mousemove', onMouseMove);
