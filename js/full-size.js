@@ -41,7 +41,7 @@
     bigPictureImg.src = photo.url;
     bigPictureLikes.textContent = photo.likes;
     bigPictureCommentsCounter.textContent = photo.comments.length;
-    bigPictureComments.innerHTML = '';
+    bigPictureComments.textContent = '';
 
     photo.comments.forEach(function (comment) {
       bigPictureComments.appendChild(getCommentTemplate(comment));
