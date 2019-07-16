@@ -7,7 +7,9 @@
 
   var pictures = document.querySelector('.pictures');
   var buttons = document.querySelectorAll('.img-filters__button');
-  var photos = [];
+  window.data = {
+    photos: []
+  };
 
   var removeActiveClass = function (allButtons) {
     allButtons.forEach(function (button) {
@@ -45,7 +47,7 @@
       evt.preventDefault();
       removeActiveClass(buttons);
       deletePhotos();
-      onFilterChange(photos, button);
+      onFilterChange(window.data.photos, button);
       button.classList.add('img-filters__button--active');
     });
   });
@@ -65,8 +67,9 @@
   };
 
   var successHandler = function (data) {
-    photos = data;
-    pictures.appendChild(getTemplate(photos));
+    window.data.photos = data;
+    window.showBigPicture(window.data.photos[0]);
+    pictures.appendChild(getTemplate(window.data.photos));
     document.querySelector('.img-filters').classList.remove('img-filters--inactive');
   };
 
