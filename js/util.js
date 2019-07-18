@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var ESC_KEYCODE = 27;
+
   window.util = {
     getRandomValue: function (min, max) {
       var rand = min + Math.random() * (max + 1 - min);
@@ -19,6 +21,11 @@
       };
 
       return result.sort(compareRandom);
+    },
+    isEscEvent: function (evt, action) {
+      if (evt.keyCode === ESC_KEYCODE) {
+        action();
+      }
     }
   };
 })();
