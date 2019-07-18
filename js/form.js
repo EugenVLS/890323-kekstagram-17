@@ -40,6 +40,8 @@
   var effectLevelLine = editPhotoForm.querySelector('.effect-level__depth');
   var effectLevelValue = editPhotoForm.querySelector('.effect-level__value');
   var sliderEffect = editPhotoForm.querySelector('.effect-level');
+  var form = document.querySelector('.img-upload__form');
+  var formHashtagInput = form.querySelector('.text__hashtags');
 
   var onPopupEscPress = function (evt) {
     if (evt.keyCode === ESC_KEYCODE) {
@@ -188,4 +190,33 @@
   commentInput.addEventListener('blur', function () {
     document.addEventListener('keydown', onPopupEscPress);
   });
+
+  formHashtagInput.addEventListener('focus', function () {
+    document.removeEventListener('keydown', onPopupEscPress);
+  });
+
+  formHashtagInput.addEventListener('blur', function () {
+    document.addEventListener('keydown', onPopupEscPress);
+  });
+
+  form.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.backend.save(new FormData(form), successHandler, errorHandler);
+  });
+
+  var successHandler = function () {
+    editPhotoForm.classList.add('hidden');
+  };
+
+  var errorHandler = function (errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    node.style.position = 'absolute';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = '30px';
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
 })();
