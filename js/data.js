@@ -4,7 +4,6 @@
   var photosTemplate = document.querySelector('#picture')
     .content
     .querySelector('.picture');
-
   var pictures = document.querySelector('.pictures');
   var buttons = document.querySelectorAll('.img-filters__button');
   window.data = {

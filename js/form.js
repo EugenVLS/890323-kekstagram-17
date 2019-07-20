@@ -29,7 +29,12 @@
   }];
 
   var ESC_KEYCODE = 27;
-
+  var successMessageTemplate = document.querySelector('#success')
+    .content
+    .querySelector('.success');
+  var errorMessageTemplate = document.querySelector('#error')
+    .content
+    .querySelector('.error');
   var currentEffect = '';
   var inputUpload = document.querySelector('#upload-file');
   var editPhotoForm = document.querySelector('.img-upload__overlay');
@@ -42,6 +47,10 @@
   var sliderEffect = editPhotoForm.querySelector('.effect-level');
   var form = document.querySelector('.img-upload__form');
   var formHashtagInput = form.querySelector('.text__hashtags');
+  var formCommentInput = form.querySelector('.text__description');
+  var main = document.querySelector('main');
+  var successMessage = successMessageTemplate.cloneNode(true);
+  var errorMessage = errorMessageTemplate.cloneNode(true);
 
   var onPopupEscPress = function (evt) {
     if (evt.keyCode === ESC_KEYCODE) {
@@ -73,9 +82,14 @@
     uploadPreview.classList = '';
     uploadPreview.style.filter = '';
     sliderEffect.style.visibility = '';
-    if (evt.target.value === 'none') {
+    if (evt !== undefined && evt.target.value === 'none') {
       sliderEffect.style.visibility = 'hidden';
     }
+  };
+
+  var resetForm = function () {
+    formHashtagInput.value = '';
+    formCommentInput.value = '';
   };
 
   var getPinValue = function (evt) {
@@ -204,19 +218,60 @@
     window.backend.save(new FormData(form), successHandler, errorHandler);
   });
 
-  var successHandler = function () {
-    editPhotoForm.classList.add('hidden');
+  var deleteElement = function (container, element) {
+    container.removeChild(element);
+    document.removeEventListener('keydown', onMessageEcsPress);
+    document.removeEventListener('click', onDocumentClick);
   };
 
-  var errorHandler = function (errorMessage) {
-    var node = document.createElement('div');
-    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
-    node.style.position = 'absolute';
-    node.style.left = 0;
-    node.style.right = 0;
-    node.style.fontSize = '30px';
+  var onMessageEcsPress = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      if (main.contains(errorMessage)) {
+        deleteElement(main, errorMessage);
+      }
+      if (main.contains(successMessage)) {
+        deleteElement(main, successMessage);
+      }
+    }
+  };
 
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
+  var onDocumentClick = function (evt) {
+    if (main.contains(errorMessage) && evt.target === errorMessage) {
+      deleteElement(main, errorMessage);
+    }
+    if (main.contains(successMessage) && evt.target === successMessage) {
+      deleteElement(main, successMessage);
+    }
+  };
+
+  var onMessageButtonClick = function () {
+    if (main.contains(errorMessage)) {
+      deleteElement(main, errorMessage);
+    }
+    if (main.contains(successMessage)) {
+      deleteElement(main, successMessage);
+    }
+  };
+
+  var showMessage = function (container, element) {
+    container.appendChild(element);
+
+    document.addEventListener('keydown', onMessageEcsPress);
+    document.addEventListener('click', onDocumentClick);
+    element.querySelectorAll('button').forEach(function (button) {
+      button.addEventListener('click', onMessageButtonClick);
+    });
+  };
+
+  var successHandler = function () {
+    editPhotoForm.classList.add('hidden');
+    resetFilter();
+    resetForm();
+    showMessage(main, successMessage);
+  };
+
+  var errorHandler = function () {
+    editPhotoForm.classList.add('hidden');
+    showMessage(main, errorMessage);
   };
 })();
