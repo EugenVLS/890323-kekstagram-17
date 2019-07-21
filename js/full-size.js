@@ -30,24 +30,42 @@
   window.showBigPicture = function (photo) {
     var bigPictureImg = bigPicture.querySelector('.big-picture__img img');
     var bigPictureLikes = bigPicture.querySelector('.likes-count');
-    var bigPictureCommentsCounter = bigPicture.querySelector('.comments-count');
+    var bigPictureCommentsCounter = bigPicture.querySelector('.social__comment-count');
     var bigPictureComments = bigPicture.querySelector('.social__comments');
     var bigPictureDescription = bigPicture.querySelector('.social__caption');
-    var bigPictureCommentsCount = bigPicture.querySelector('.social__comment-count');
     var bigPictureCommentsLoader = bigPicture.querySelector('.comments-loader');
+    var photoComments = photo.comments.slice();
 
-    bigPictureCommentsCount.classList.add('visually-hidden');
-    bigPictureCommentsLoader.classList.add('visually-hidden');
+    var loadComments = function () {
+      if (photoComments.length > 5) {
+        bigPictureCommentsLoader.addEventListener('click', loadComments);
 
+        for (var i = 0; i < 5; i++) {
+          bigPictureComments.appendChild(getCommentTemplate(photoComments[i]));
+        }
+      } else {
+        photoComments.forEach(function (comment) {
+          bigPictureComments.appendChild(getCommentTemplate(comment));
+        });
+      }
+
+      photoComments.splice(0, 5);
+
+      if (photoComments.length === 0) {
+        bigPictureCommentsLoader.classList.add('hidden');
+        bigPictureCommentsLoader.removeEventListener('click', loadComments);
+      }
+    };
+
+    bigPictureCommentsCounter.classList.add('hidden');
     bigPicture.classList.remove('hidden');
+    bigPictureCommentsLoader.classList.remove('hidden');
     bigPictureImg.src = photo.url;
     bigPictureLikes.textContent = photo.likes;
     bigPictureCommentsCounter.textContent = photo.comments.length;
     bigPictureComments.textContent = '';
 
-    photo.comments.forEach(function (comment) {
-      bigPictureComments.appendChild(getCommentTemplate(comment));
-    });
+    loadComments();
 
     bigPictureDescription.textContent = photo.description;
 
