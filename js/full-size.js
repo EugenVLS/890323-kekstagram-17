@@ -62,11 +62,8 @@
     bigPictureCommentsLoader.classList.remove('hidden');
     bigPictureImg.src = photo.url;
     bigPictureLikes.textContent = photo.likes;
-    bigPictureCommentsCounter.textContent = photo.comments.length;
     bigPictureComments.textContent = '';
-
     loadComments();
-
     bigPictureDescription.textContent = photo.description;
 
     var onBigPictureEscPress = function (evt) {
