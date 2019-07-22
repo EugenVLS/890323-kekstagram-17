@@ -74,7 +74,7 @@
     bigPictureImg.src = photo.url;
     bigPictureLikes.textContent = photo.likes;
     bigPictureComments.textContent = '';
-    loadComments(photoComments);
+    loadComments();
     bigPictureDescription.textContent = photo.description;
 
     var onBigPictureEscPress = function (evt) {
