@@ -7,6 +7,7 @@
     var hashtags = evt.target.value.split(' ');
 
     hashtags.forEach(function (hashtag) {
+      console.log(hashtag);
       validate(hashtags, hashtag);
     });
 
@@ -17,7 +18,7 @@
       var numberOfRepeating = hashtags.slice().filter(function (hashtagItem) {
         return hashtagItem.toLowerCase() === hashtag.toLowerCase();
       }).length;
-
+      console.log(numberOfRepeating);
       return numberOfRepeating > 1;
     };
 
