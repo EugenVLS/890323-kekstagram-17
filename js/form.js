@@ -29,6 +29,10 @@
   }];
 
   var ESC_KEYCODE = 27;
+  var MIN_SCALE = 25;
+  var MAX_SCALE = 100;
+  var SCALE_STEP = 25;
+  var DEFAULT_SCALE = 100;
   var successMessageTemplate = document.querySelector('#success')
     .content
     .querySelector('.success');
@@ -40,6 +44,9 @@
   var editPhotoForm = document.querySelector('.img-upload__overlay');
   var uploadCancel = editPhotoForm.querySelector('#upload-cancel');
   var uploadPreview = editPhotoForm.querySelector('.img-upload__preview img');
+  var controlSizeSmaller = editPhotoForm.querySelector('.scale__control--smaller');
+  var controlSizeBigger = editPhotoForm.querySelector('.scale__control--bigger');
+  var sizeValue = editPhotoForm.querySelector('.scale__control--value');
   var radioEffects = editPhotoForm.querySelectorAll('.effects__radio');
   var effectLevelPin = editPhotoForm.querySelector('.effect-level__pin');
   var effectLevelLine = editPhotoForm.querySelector('.effect-level__depth');
@@ -70,6 +77,29 @@
     document.removeEventListener('keydown', onPopupEscPress);
   };
 
+  var onSizeControlSmallerClick = function () {
+    var valueInInteger = parseInt(sizeValue.value.substring(0, sizeValue.value.length - 1), 10);
+
+    if (valueInInteger !== MIN_SCALE) {
+      var newScale = valueInInteger - SCALE_STEP;
+      sizeValue.value = newScale + '%';
+      uploadPreview.style.transform = 'scale(' + newScale / 100 + ')';
+    }
+  };
+
+  var onSizeControlBiggerClick = function () {
+    var valueInInteger = parseInt(sizeValue.value.substring(0, sizeValue.value.length - 1), 10);
+
+    if (valueInInteger !== MAX_SCALE) {
+      var newScale = valueInInteger + SCALE_STEP;
+      sizeValue.value = newScale + '%';
+      uploadPreview.style.transform = 'scale(' + newScale / 100 + ')';
+    }
+  };
+
+  controlSizeSmaller.addEventListener('click', onSizeControlSmallerClick);
+  controlSizeBigger.addEventListener('click', onSizeControlBiggerClick);
+
   var putEffect = function (evt) {
     currentEffect = evt.target.value;
     uploadPreview.classList.add('effects__preview--' + currentEffect);
@@ -78,7 +108,7 @@
   var resetFilter = function (evt) {
     effectLevelPin.style.left = '100%';
     effectLevelLine.style.width = '100%';
-    effectLevelValue.value = 100;
+    effectLevelValue.value = DEFAULT_SCALE;
     uploadPreview.classList = '';
     uploadPreview.style.filter = '';
     sliderEffect.style.visibility = '';

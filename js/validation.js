@@ -17,7 +17,6 @@
       var numberOfRepeating = hashtags.slice().filter(function (hashtagItem) {
         return hashtagItem.toLowerCase() === hashtag.toLowerCase();
       }).length;
-
       return numberOfRepeating > 1;
     };
 
