@@ -1,6 +1,13 @@
 'use strict';
 
 (function () {
+  var ESC_KEYCODE = 27;
+  var MIN_SCALE = 25;
+  var MAX_SCALE = 100;
+  var SCALE_STEP = 25;
+  var DEFAULT_SCALE = '100%';
+  var DEFAULT_EFFECT_LEVEL = 100;
+
   var effects = [{
     effect: 'chrome',
     property: 'grayscale',
@@ -27,12 +34,6 @@
     min: 1,
     max: 3
   }];
-
-  var ESC_KEYCODE = 27;
-  var MIN_SCALE = 25;
-  var MAX_SCALE = 100;
-  var SCALE_STEP = 25;
-  var DEFAULT_SCALE = 100;
   var successMessageTemplate = document.querySelector('#success')
     .content
     .querySelector('.success');
@@ -74,6 +75,7 @@
   var closePopup = function () {
     editPhotoForm.classList.add('hidden');
     inputUpload.value = '';
+    resetFilter();
     document.removeEventListener('keydown', onPopupEscPress);
   };
 
@@ -108,9 +110,11 @@
   var resetFilter = function (evt) {
     effectLevelPin.style.left = '100%';
     effectLevelLine.style.width = '100%';
-    effectLevelValue.value = DEFAULT_SCALE;
+    effectLevelValue.value = DEFAULT_EFFECT_LEVEL;
+    sizeValue.value = DEFAULT_SCALE;
     uploadPreview.classList = '';
     uploadPreview.style.filter = '';
+    uploadPreview.style.transform = '';
     sliderEffect.style.visibility = '';
     if (evt !== undefined && evt.target.value === 'none') {
       sliderEffect.style.visibility = 'hidden';
