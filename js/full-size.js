@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var DEFAULT_COMMENTS_NUMBER = 5;
   var bigPicture = document.querySelector('.big-picture');
   var bigPictureClose = bigPicture.querySelector('.big-picture__cancel');
   var photoComments = '';
@@ -11,10 +12,9 @@
     var templateMessage = document.createElement('p');
 
     templateComment.classList.add('social__comment');
-
     templateImg.classList.add('social__picture');
     templateImg.src = 'img/avatar-' + window.util.getRandomValue(1, 6) + '.svg';
-    templateImg.alt = 'Аватар комментатора фотографии';
+    templateImg.alt = comment.name;
     templateImg.width = 35;
     templateImg.height = 35;
 
@@ -29,13 +29,12 @@
   };
 
   var loadComments = function () {
-    var DEFAULT_COMMENTS_NUMBER = 5;
     var bigPictureComments = bigPicture.querySelector('.social__comments');
     var bigPictureCommentsLoader = bigPicture.querySelector('.comments-loader');
-
-    bigPictureCommentsLoader.classList.remove('hidden');
     var fragment = document.createDocumentFragment();
     var onBigPictureCommentsLoaderClick = loadComments;
+
+    bigPictureCommentsLoader.classList.remove('hidden');
 
     if (photoComments.length > DEFAULT_COMMENTS_NUMBER) {
       bigPictureCommentsLoader.addEventListener('click', onBigPictureCommentsLoaderClick);
@@ -62,13 +61,15 @@
   };
 
   window.showBigPicture = function (photo) {
+    var body = document.querySelector('body');
     var bigPictureImg = bigPicture.querySelector('.big-picture__img img');
     var bigPictureLikes = bigPicture.querySelector('.likes-count');
     var bigPictureCommentsCounter = bigPicture.querySelector('.social__comment-count');
     var bigPictureDescription = bigPicture.querySelector('.social__caption');
     var bigPictureComments = bigPicture.querySelector('.social__comments');
-    photoComments = photo.comments.slice();
 
+    photoComments = photo.comments.slice();
+    body.classList.add('modal-open');
     bigPictureCommentsCounter.classList.add('hidden');
     bigPicture.classList.remove('hidden');
     bigPictureImg.src = photo.url;
@@ -82,6 +83,7 @@
     };
 
     var closePopup = function () {
+      body.classList.remove('modal-open');
       bigPicture.classList.add('hidden');
       document.removeEventListener('keydown', onBigPictureEscPress);
     };
