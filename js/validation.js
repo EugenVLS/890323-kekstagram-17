@@ -1,7 +1,9 @@
 'use strict';
 
 (function () {
-  var formHashtagInput = document.querySelector('.text__hashtags');
+  var form = document.querySelector('.img-upload__form');
+  var formHashtagInput = form.querySelector('.text__hashtags');
+  var formCommentInput = form.querySelector('.text__description');
 
   var validate = function (hashtag, hashtags) {
     var checkRepeatingHashtag = function () {
@@ -34,6 +36,14 @@
       return true;
     }
   };
+
+  formHashtagInput.addEventListener('invalid', function (evt) {
+    evt.target.style.border = '2px solid red';
+  });
+
+  formCommentInput.addEventListener('invalid', function (evt) {
+    evt.target.style.border = '2px solid red';
+  });
 
   formHashtagInput.addEventListener('input', function (evt) {
     var hashtags = evt.target.value.split(' ');
