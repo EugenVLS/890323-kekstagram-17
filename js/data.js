@@ -37,7 +37,7 @@
     });
   };
 
-  var onFilterChange = window.debounce(function (data, button) {
+  var onFilterChange = window.util.debounce(function (data, button) {
     var sortedPhotos = sortPhotos(data, button.id);
     pictures.appendChild(getTemplate(sortedPhotos));
     initFullSize(sortedPhotos);
@@ -67,7 +67,7 @@
     return fragment;
   };
 
-  var listen = function (picture, photo) {
+  var bindData = function (picture, photo) {
     picture.addEventListener('click', function () {
       window.showBigPicture(photo);
     });
@@ -77,7 +77,7 @@
     var allPicture = document.querySelectorAll('.picture');
 
     for (var i = 0; i < allPicture.length; i++) {
-      listen(allPicture[i], data[i]);
+      bindData(allPicture[i], data[i]);
     }
   };
 

@@ -79,8 +79,12 @@
     document.removeEventListener('keydown', onPopupEscPress);
   };
 
+  var getIntegerSize = function (value) {
+    return parseInt(value.substring(0, value.length - 1), 10);
+  };
+
   var onSizeControlSmallerClick = function () {
-    var valueInInteger = parseInt(sizeValue.value.substring(0, sizeValue.value.length - 1), 10);
+    var valueInInteger = getIntegerSize(sizeValue.value);
 
     if (valueInInteger !== MIN_SCALE) {
       var newScale = valueInInteger - SCALE_STEP;
@@ -90,7 +94,7 @@
   };
 
   var onSizeControlBiggerClick = function () {
-    var valueInInteger = parseInt(sizeValue.value.substring(0, sizeValue.value.length - 1), 10);
+    var valueInInteger = getIntegerSize(sizeValue.value);
 
     if (valueInInteger !== MAX_SCALE) {
       var newScale = valueInInteger + SCALE_STEP;
@@ -135,27 +139,21 @@
 
   var getEffectValue = function (property, min, max, pinValue) {
     var effectValue = min + (max - min) / 100 * pinValue;
-    var value = '';
 
     switch (property) {
       case 'grayscale':
-        value = property + '(' + effectValue + ')';
-        break;
+        return property + '(' + effectValue + ')';
       case 'sepia':
-        value = property + '(' + effectValue + ')';
-        break;
+        return property + '(' + effectValue + ')';
       case 'invert':
-        value = property + '(' + effectValue + '%)';
-        break;
+        return property + '(' + effectValue + '%)';
       case 'blur':
-        value = property + '(' + effectValue + 'px)';
-        break;
+        return property + '(' + effectValue + 'px)';
       case 'brightness':
-        value = property + '(' + effectValue + ')';
-        break;
+        return property + '(' + effectValue + ')';
+      default:
+        return '';
     }
-
-    return value;
   };
 
   var setEffectSaturation = function (effect) {
