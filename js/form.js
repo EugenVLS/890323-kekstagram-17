@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  var ESC_KEYCODE = 27;
   var MIN_SCALE = 25;
   var MAX_SCALE = 100;
   var SCALE_STEP = 25;
@@ -61,9 +60,7 @@
   var errorMessage = errorMessageTemplate.cloneNode(true);
 
   var onPopupEscPress = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      closePopup();
-    }
+    window.util.isEscEvent(evt, closePopup);
   };
 
   var openPopup = function () {
@@ -161,9 +158,7 @@
 
     for (var i = 0; i < effects.length; i++) {
       if (effects[i].effect === effect) {
-        var effectValue = getEffectValue(effects[i].property, effects[i].min, effects[i].max, pinValue);
-
-        uploadPreview.style.filter = effectValue;
+        uploadPreview.style.filter = getEffectValue(effects[i].property, effects[i].min, effects[i].max, pinValue);
       }
     }
   };
@@ -256,15 +251,17 @@
     document.removeEventListener('click', onDocumentClick);
   };
 
-  var onMessageEcsPress = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      if (main.contains(errorMessage)) {
-        deleteElement(main, errorMessage);
-      }
-      if (main.contains(successMessage)) {
-        deleteElement(main, successMessage);
-      }
+  var removeMessage = function () {
+    if (main.contains(errorMessage)) {
+      deleteElement(main, errorMessage);
     }
+    if (main.contains(successMessage)) {
+      deleteElement(main, successMessage);
+    }
+  };
+
+  var onMessageEcsPress = function (evt) {
+    window.util.isEscEvent(evt, removeMessage);
   };
 
   var onDocumentClick = function (evt) {
